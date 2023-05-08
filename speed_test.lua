@@ -13,7 +13,6 @@ local timedl = 0
   local function DownloadCallback(_, downloadspeednow, _, _)
     local time = socket.gettime()
     local downloadspeedcallback = downloadspeednow / time / 1024 / 1024 * 8
-    string.format("%d",downloadspeedcallback)
     if downloadspeedcallback > 0 then
         print(cjson.encode({download_speed_Mbps_currently = downloadspeedcallback}))
     end
@@ -34,7 +33,7 @@ end
     })
     status, value = pcall(easy.perform, easy)
     if not status and value ~="[CURL-EASY][OPERATION_TIMEDOUT] Timeout was reached (28)" then
-       print("Error" .. value.. "with download host")
+       print("Error " .. value.. " with download host")
     end
     local downloadspeed = easy:getinfo(curl.INFO_SPEED_DOWNLOAD) / 1024 / 1024 * 8
     io.close(outfile)
@@ -71,7 +70,7 @@ end
     })
     status, value = pcall(easy.perform, easy)
     if not status and value ~="[CURL-EASY][OPERATION_TIMEDOUT] Timeout was reached (28)" then
-        print("Error" .. value.. "with upload host")
+        print("Error " .. value.. " with upload host")
      end
     local uploadspeed = easy:getinfo(curl.INFO_SPEED_UPLOAD) / 1024 / 1024 * 8 
     io.close(outfile)
