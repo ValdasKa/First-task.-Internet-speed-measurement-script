@@ -29,12 +29,13 @@ end
     })
     timedl = socket.gettime()
     status, value = pcall(easy.perform, easy)
-    if not status and value ~="[CURL-EASY][OPERATION_TIMEDOUT] Timeout was reached (28)" then
-       print("Error " .. value.. " with download host")
-    end
     local downloadspeed = easy:getinfo(curl.INFO_SPEED_DOWNLOAD) / 1024 / 1024 * 8
     io.close(outfile)
     easy:close()
+    if not status and value ~="[CURL-EASY][OPERATION_TIMEDOUT] Timeout was reached (28)" then
+       error("Error " .. value.. " with download host",0)
+    end
+    
     return string.format("%d", downloadspeed)
 end
 -----------------------download test finish----------------------
@@ -69,12 +70,13 @@ end
     })
     dltime = socket.gettime()
     status, value = pcall(easy.perform, easy)
-    if not status and value ~="[CURL-EASY][OPERATION_TIMEDOUT] Timeout was reached (28)" then
-        print("Error " .. value.. " with upload host")
-     end
+    
     local uploadspeed = easy:getinfo(curl.INFO_SPEED_UPLOAD) / 1024 / 1024 * 8 
     io.close(outfile)
     easy:close()
+    if not status and value ~="[CURL-EASY][OPERATION_TIMEDOUT] Timeout was reached (28)" then
+        error("Error " .. value.. " with upload host", 0)
+     end
     return string.format("%d", uploadspeed)
 end
 
@@ -87,13 +89,13 @@ function DownloadServerFile()
     if outfile==nil then
         local http = require("socket.http")
         local body, code = http.request("https://raw.githubusercontent.com/ValdasKa/Internet-speed-test-servers-json/main/speedtest_server_list.json")
-        if not body then pcall(code) end
-        if not body then
-            print("Error " .. code .. "with file download")
-        end
+        if not body then pcall(code) end      
         local outfile = assert(io.open('speedtest_server_list.json', 'wb'))
         outfile:write(body)
         outfile:close()
+        if not body then
+            error("Error " .. code .. "with file download")
+        end
     end
 end
 DownloadServerFile()
@@ -110,11 +112,11 @@ DownloadServerFile()
     writefunction = function (response) pingdata = pingdata .. response end
     })
     status, value = pcall(easy.perform, easy)
-    if not status then
-        print("Error" .. value.. "with ipinfo.io host")
-     end
     easy:close()
     local status, data = pcall(cjson.decode, pingdata)
+    if not status then
+        error("Error" .. value.. "with ipinfo.io host")
+     end
     return data
 end
 -------------------------Find my location finish---------------------- 
@@ -142,12 +144,13 @@ end
     writefunction = outfile
     })
     status, value = pcall(easy.perform, easy)
-    if not status then
-        print("Error" .. value.. "with ping host")
-     end
+    
     local ping = easy:getinfo(curl.INFO_TOTAL_TIME)
     easy:close()
     io.close(outfile)
+    if not status then
+        error("Error" .. value.. "with ping host")
+     end
     return ping
 end
 
@@ -161,7 +164,7 @@ local function GoodServers(servers, mycountry)
         end
     end
     if servlist == nil then
-        print("Error server list is empty")
+        error("Error server list is empty")
     end
     return servlist
 end
@@ -173,7 +176,7 @@ function speed_test.FindBestServer(servers, mycountry)
     local bestserver = ""
     local status, servlist = pcall(GoodServers, servers, mycountry)
     if status == nil then
-        print("error")
+        error("Error" .. servlist .. " with best server find")
     end
     for _, val in ipairs(servlist) do
         local ping = TestPing(val)
@@ -181,6 +184,9 @@ function speed_test.FindBestServer(servers, mycountry)
             bestserver = val
             bestping = ping
         end
+    end
+    if bestping == 10 or bestserver == ""  then
+        error("Error couldnt find best server for this location")
     end
     return bestserver, bestping
     end
