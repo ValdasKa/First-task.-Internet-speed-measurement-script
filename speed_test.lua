@@ -1,9 +1,9 @@
 local speed_test = {}
 local cjson = require("cjson")
 curl= require("cURL")
-easy = curl.easy()
 local argparse = require("argparse")
 local socket = require("socket")
+easy = curl.easy()
 local value, status = "", true
 local timedl = 0
 
@@ -13,6 +13,7 @@ local timedl = 0
   local function DownloadCallback(_, downloadspeednow, _, _)
     local time = socket.gettime()
     local downloadspeedcallback = downloadspeednow / time / 1024 / 1024 * 8
+    string.format("%d",downloadspeedcallback)
     if downloadspeedcallback > 0 then
         print(cjson.encode({download_speed_Mbps_currently = downloadspeedcallback}))
     end
@@ -38,7 +39,7 @@ end
     local downloadspeed = easy:getinfo(curl.INFO_SPEED_DOWNLOAD) / 1024 / 1024 * 8
     io.close(outfile)
     easy:close()
-    return downloadspeed
+    return string.format("%d", downloadspeed)
 end
 -----------------------download test finish----------------------
 
@@ -58,7 +59,7 @@ end
     if outfile ==nil then
         print("Error for /dev/zero open")
     end
-    easy = curl.easy({ 
+    easy = curl.easy({
         httpheader = {"User-Agent:curl/7.81.0","Accept:*/*",["Cache-Control"] = "no-cache"},
         url = url .. "/upload",
         writefunction = outfile,
@@ -75,7 +76,7 @@ end
     local uploadspeed = easy:getinfo(curl.INFO_SPEED_UPLOAD) / 1024 / 1024 * 8 
     io.close(outfile)
     easy:close()
-    return uploadspeed
+    return string.format("%d", uploadspeed)
 end
 
 -------------------------Upload test finish ----------------------

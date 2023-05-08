@@ -1,14 +1,6 @@
 local speedtest = require("speed_test")
 local cjson = require("cjson")
-curl= require("cURL")
-easy = curl.easy()
 local argparse = require("argparse")
-local socket = require("socket")
-local value, status = "", true
-local timedl = 0
-location = speedtest.FindMyLocation()
-location['country'] = "Lithuania"
-
 
 --------------------------args start for runing fuctions---------------
 local parser = argparse("test.lua", "Internet speed measurement")
@@ -27,26 +19,23 @@ if (args.download) then download_speed_Mbps = speedtest.TestDownloadSpeed(args.d
 --args upload speed test 
 else if args.upload then upload_speed_Mbps = speedtest.TestUploadSpeed(args.upload)
     if upload_speed_Mbps then print(cjson.encode({upload_speed_Mbps = upload_speed_Mbps}))end
-
 --args to check if file exist
 elseif args.filecheck then file_exist = speedtest.FileExist() if file_exist then
     print(cjson.encode({file_exist = file_exist})) end
-
 -- find location args command
 elseif args.location then location = speedtest.FindMyLocation() if location then
     print(cjson.encode({location = location}))end
-    
 --Bestserver args start
 elseif args.bestserver then
     best_server, latency_sec = speedtest.FindBestServer(ReadServerList(), args.bestserver)
     if best_server then print(cjson.encode({best_server = best_server, latency_sec = latency_sec}))end
-
-
 -------------------------Auto run everything start--------------------------
 elseif args.auto then
     download_speed_Mbps= speedtest.TestDownloadSpeed('speedtest.litnet.lt:8080')
     upload_speed_Mbps = speedtest.TestUploadSpeed('speedtest.litnet.lt:8080')
     file_exist = speedtest.FileExist()
+    location = speedtest.FindMyLocation()
+    location['country'] = "Lithuania"
     best_server, latency_sec =speedtest.FindBestServer(ReadServerList(), location['country'])
     location = speedtest.FindMyLocation()
     print(cjson.encode({file_exist = file_exist}))
@@ -55,8 +44,9 @@ elseif args.auto then
     print(cjson.encode({best_server = best_server, latency_sec = latency_sec}))
     print()
     print(cjson.encode({location = location}))
-    
+----------------------------------Print help if none args used-------------------
 else
     print("main.lua: try use ' lua main.lua -h, --help ' for help") 
-end end
+end
+end
 -------------------------Auto run everything finish--------------------------
