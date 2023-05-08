@@ -6,7 +6,7 @@ local socket = require("socket")
 -----------------------download test start -----------------
   --callback function 
   local function DownloadCallback(_, downloadspeednow, _, _)
-    local time = socket.gettime() - timedl
+    local time = socket.gettime() - timedownload
     local downloadspeedcallback = downloadspeednow / time / 1024 / 1024 * 8
     speed = tonumber(string.format("%.2f", downloadspeedcallback))
     if downloadspeedcallback > 0 then
@@ -27,7 +27,7 @@ end
     progressfunction = DownloadCallback,
     timeout = 10
     })
-    timedl = socket.gettime()
+    timedownload = socket.gettime()
     status, value = pcall(easy.perform, easy)
     local downloadspeed = easy:getinfo(curl.INFO_SPEED_DOWNLOAD) / 1024 / 1024 * 8
     io.close(outfile)
@@ -44,7 +44,7 @@ end
 
 --upload call back
 local function UploadCallback(_, _, _,uploadspeednow )
-    local time = socket.gettime() - dltime
+    local time = socket.gettime() - uploadtime
     local uploadspeedcallback = uploadspeednow / time / 1024 / 1024 * 8
     speed = tonumber(string.format("%.2f", uploadspeedcallback))
     
@@ -68,7 +68,7 @@ end
             file = {file = "/dev/zero"}}),
         timeout = 10
     })
-    dltime = socket.gettime()
+    uploadtime = socket.gettime()
     status, value = pcall(easy.perform, easy)
     
     local uploadspeed = easy:getinfo(curl.INFO_SPEED_UPLOAD) / 1024 / 1024 * 8 
@@ -125,11 +125,17 @@ end
 ----------------------ReadServerList from json file
 function ReadServerList()
     local serverlist = io.open("speedtest_server_list.json", "r")
+    if not serverlist then
+        error("Error opening server list file for reading ")
+    end
     local status, data = pcall(serverlist.read, serverlist, "*all")
     io.close(serverlist)
     if data ~= "" then
         local decodedata = cjson.decode(data)
         return decodedata
+    end
+    if not status then
+        error("Error " .. data .. "with read server list")
     end
     return false
 end
