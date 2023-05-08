@@ -18,7 +18,7 @@ local timedl = 0
     end
 end
 --Function to test download speed
-    function TestDownloadSpeed(url)
+    function speed_test.TestDownloadSpeed(url)
     local outfile = io.open("/dev/null", "r+")
     if outfile == nil then
         print("Error for /dev/null open")
@@ -50,7 +50,7 @@ local function UploadCallback(_, _, _,uploadspeednow )
     end
 end
 -- function for upload speed test
-    function TestUploadSpeed(url)
+    function speed_test.TestUploadSpeed(url)
     local outfile = io.open("/dev/zero", "r+")
     if outfile ==nil then
         print("Error for /dev/zero open")
@@ -76,7 +76,7 @@ end
 
 -------------------------Download server list file----------------
 --function to check if server list file exist
- function FileExist()
+ function speed_test.FileExist()
     local outfile = io.open("speedtest_server_list.json", "r")
     if outfile~= nil then io.close(outfile) 
         return print(true, "file already exist")
@@ -154,7 +154,7 @@ local function GoodServers(servers, mycountry)
 end
 
 --best server finding function
-function FindBestServer(servers, mycountry)
+function speed_test.FindBestServer(servers, mycountry)
 
     local bestping = 10
     local bestserver = ""

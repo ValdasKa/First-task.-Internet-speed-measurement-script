@@ -6,7 +6,8 @@ local argparse = require("argparse")
 local socket = require("socket")
 local value, status = "", true
 local timedl = 0
-
+location = speedtest.FindMyLocation()
+location['country'] = "Lithuania"
 
 
 --------------------------args start for runing fuctions---------------
@@ -21,15 +22,15 @@ local args = parser:parse()
 -------------------------args end for runing functions-----------------
 
 -- args download speed test 
-if (args.download) then dl = TestDownloadSpeed(args.download)
+if (args.download) then dl = speedtest.TestDownloadSpeed(args.download)
     if dl then print(cjson.encode({dl = dl}))end
     end
 --args upload speed test 
-if args.upload then up = TestUploadSpeed(args.upload)
+if args.upload then up = speedtest.TestUploadSpeed(args.upload)
     if up then print(cjson.encode({up = up}))end
     end
 --args to check if file exist
-if args.filecheck then filexist = FileExist() if filexist then
+if args.filecheck then filexist = speedtest.FileExist() if filexist then
     print(cjson.encode({filexist = filexist})) end
 end
 -- find location args command
@@ -38,17 +39,17 @@ if args.location then loc = speedtest.FindMyLocation() if loc then
     end
 --Bestserver args start
 if args.bestserver then
-    bestserver, ping = FindBestServer(ReadServerList(), args.bestserver)
+    bestserver, ping = speedtest.FindBestServer(ReadServerList(), args.bestserver)
     if bestserver then print(cjson.encode({bestserver = bestserver, ping = ping}))end
 end
 
 -------------------------Auto run everything start--------------------------
 if args.auto then
-    dl= TestDownloadSpeed('speedtest.litnet.lt:8080')
-    up = TestUploadSpeed('speedtest.litnet.lt:8080')
-    filexist = FileExist()
-    bestserver, ping =FindBestServer(ReadServerList(), location['country'])
-    loc = FindMyLocation()
+    dl= speedtest.TestDownloadSpeed('speedtest.litnet.lt:8080')
+    up = speedtest.TestUploadSpeed('speedtest.litnet.lt:8080')
+    filexist = speedtest.FileExist()
+    bestserver, ping =speedtest.FindBestServer(ReadServerList(), location['country'])
+    loc = speedtest.FindMyLocation()
     print(cjson.encode({filexist = filexist}))
     print(cjson.encode({up = up}))
     print(cjson.encode({dl = dl}))
