@@ -1,7 +1,6 @@
 local speed_test = {}
 local cjson = require("cjson")
 curl= require("cURL")
-local argparse = require("argparse")
 local socket = require("socket")
 easy = curl.easy()
 local value, status = "", true
@@ -28,7 +27,7 @@ end
     url = url .. "/download",
     writefunction = outfile,
     noprogress = false,
-    progressfunction = DownloadCallback, --galima naudoti pamatyti parsiuntimo greiti
+    progressfunction = DownloadCallback,
     timeout = 10
     })
     status, value = pcall(easy.perform, easy)
@@ -63,7 +62,7 @@ end
         url = url .. "/upload",
         writefunction = outfile,
         noprogress = false,
-        progressfunction = UploadCallback, --galima naudoti pamatyti issiuntimo greiti
+        progressfunction = UploadCallback,
         httppost = curl.form({
             file = {file = "/dev/zero"}}),
         timeout = 10
