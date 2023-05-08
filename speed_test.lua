@@ -82,12 +82,17 @@ end
 -------------------------Upload test finish ----------------------
 
 -------------------------Download server list file----------------
---function to check if server list file exist
+--functio to check if File exist
  function speed_test.FileExist()
     local outfile = io.open("speedtest_server_list.json", "r")
-    if outfile~= nil then io.close(outfile) 
+    if outfile~= nil then io.close(outfile)
         return true
-    else
+    end
+end
+--function to download server list file
+function DownloadServerFile()
+    local outfile = io.open("speedtest_server_list.json", "r")
+    if outfile==nil then
         local http = require("socket.http")
         local body, code = http.request("https://raw.githubusercontent.com/ValdasKa/Internet-speed-test-servers-json/main/speedtest_server_list.json")
         if not body then pcall(code) end
@@ -99,6 +104,7 @@ end
         outfile:close()
     end
 end
+DownloadServerFile()
 
 -------------------------Download finish server list file----------------
 
