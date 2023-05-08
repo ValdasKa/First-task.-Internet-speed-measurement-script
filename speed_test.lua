@@ -1,19 +1,16 @@
 local speed_test = {}
 local cjson = require("cjson")
-curl= require("cURL")
+local curl= require("cURL")
 local socket = require("socket")
-easy = curl.easy()
-local value, status = "", true
-local timedl = 0
-
 
 -----------------------download test start -----------------
   --callback function 
   local function DownloadCallback(_, downloadspeednow, _, _)
-    local time = socket.gettime()
+    local time = socket.gettime() - timedl
     local downloadspeedcallback = downloadspeednow / time / 1024 / 1024 * 8
+    speed = tonumber(string.format("%.2f", downloadspeedcallback))
     if downloadspeedcallback > 0 then
-        print(cjson.encode({download_speed_Mbps_currently = downloadspeedcallback}))
+        print(cjson.encode({download_speed_Mbps_currently = speed}))
     end
 end
 --Function to test download speed
@@ -30,6 +27,7 @@ end
     progressfunction = DownloadCallback,
     timeout = 10
     })
+    timedl = socket.gettime()
     status, value = pcall(easy.perform, easy)
     if not status and value ~="[CURL-EASY][OPERATION_TIMEDOUT] Timeout was reached (28)" then
        print("Error " .. value.. " with download host")
@@ -45,10 +43,12 @@ end
 
 --upload call back
 local function UploadCallback(_, _, _,uploadspeednow )
-    local time = socket.gettime()
+    local time = socket.gettime() - dltime
     local uploadspeedcallback = uploadspeednow / time / 1024 / 1024 * 8
+    speed = tonumber(string.format("%.2f", uploadspeedcallback))
+    
     if uploadspeedcallback > 0 then
-        print(cjson.encode({upload_speed_Mbps_currently  = uploadspeedcallback}))
+        print(cjson.encode({upload_speed_Mbps_currently  = speed}))
     end
 end
 -- function for upload speed test
@@ -67,6 +67,7 @@ end
             file = {file = "/dev/zero"}}),
         timeout = 10
     })
+    dltime = socket.gettime()
     status, value = pcall(easy.perform, easy)
     if not status and value ~="[CURL-EASY][OPERATION_TIMEDOUT] Timeout was reached (28)" then
         print("Error " .. value.. " with upload host")
