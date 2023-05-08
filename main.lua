@@ -1,3 +1,4 @@
+local speedtest = require("speed_test")
 local cjson = require("cjson")
 curl= require("cURL")
 easy = curl.easy()
@@ -5,6 +6,8 @@ local argparse = require("argparse")
 local socket = require("socket")
 local value, status = "", true
 local timedl = 0
+
+
 
 --------------------------args start for runing fuctions---------------
 local parser = argparse("test.lua", "Internet speed measurement")
@@ -30,7 +33,7 @@ if args.filecheck then filexist = FileExist() if filexist then
     print(cjson.encode({filexist = filexist})) end
 end
 -- find location args command
-if args.location then loc = FindMyLocation() if loc then
+if args.location then loc = speedtest.FindMyLocation() if loc then
     print(cjson.encode({loc = loc["loc"]}))end
     end
 --Bestserver args start

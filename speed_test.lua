@@ -1,3 +1,4 @@
+local speed_test = {}
 local cjson = require("cjson")
 curl= require("cURL")
 easy = curl.easy()
@@ -95,7 +96,7 @@ end
 
 -------------------------Find my location start----------------------
 --find my location
-local function FindMyLocation()
+ function speed_test.FindMyLocation()
     local pingdata = ""
     easy = curl.easy({
     httpheader =  {["Cache-Control"] = "no-cache"},
@@ -170,6 +171,8 @@ function FindBestServer(servers, mycountry)
     end
     return bestserver, bestping
     end
-location = FindMyLocation()
-location['country'] = "Lithuania"
+--location = FindMyLocation()
+--location['country'] = "Lithuania"
 -------------------------Best server for my location finish----------------------
+
+return speed_test
