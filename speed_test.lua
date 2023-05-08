@@ -80,13 +80,6 @@ end
 -------------------------Upload test finish ----------------------
 
 -------------------------Download server list file----------------
---functio to check if File exist
- function speed_test.FileExist()
-    local outfile = io.open("speedtest_server_list.json", "r")
-    if outfile~= nil then io.close(outfile)
-        return true
-    end
-end
 --function to download server list file
 function DownloadServerFile()
     local outfile = io.open("speedtest_server_list.json", "r")
