@@ -90,6 +90,9 @@ end
         local http = require("socket.http")
         local body, code = http.request("https://raw.githubusercontent.com/ValdasKa/Internet-speed-test-servers-json/main/speedtest_server_list.json")
         if not body then pcall(code) end
+        if not body then
+            print("Error " .. code .. "with file download")
+        end
         local outfile = assert(io.open('speedtest_server_list.json', 'wb'))
         outfile:write(body)
         outfile:close()
