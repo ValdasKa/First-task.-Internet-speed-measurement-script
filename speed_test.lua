@@ -20,7 +20,7 @@ end
 --Function to test download speed
     function speed_test.TestDownloadSpeed(url)
     local outfile = io.open("/dev/null", "r+")
-    if outfile == nil then
+    if not outfile then
         print("Error for /dev/null open")
     end
     easy = curl.easy({
@@ -32,6 +32,9 @@ end
     timeout = 10
     })
     status, value = pcall(easy.perform, easy)
+    if not status and value ~="[CURL-EASY][OPERATION_TIMEDOUT] Timeout was reached (28)" then
+       print("Error" .. value.. "with download host")
+    end
     local downloadspeed = easy:getinfo(curl.INFO_SPEED_DOWNLOAD) / 1024 / 1024 * 8
     io.close(outfile)
     easy:close()
@@ -55,7 +58,7 @@ end
     if outfile ==nil then
         print("Error for /dev/zero open")
     end
-    easy = curl.easy({
+    easy = curl.easy({ 
         httpheader = {"User-Agent:curl/7.81.0","Accept:*/*",["Cache-Control"] = "no-cache"},
         url = url .. "/upload",
         writefunction = outfile,
@@ -66,6 +69,9 @@ end
         timeout = 10
     })
     status, value = pcall(easy.perform, easy)
+    if not status and value ~="[CURL-EASY][OPERATION_TIMEDOUT] Timeout was reached (28)" then
+        print("Error" .. value.. "with upload host")
+     end
     local uploadspeed = easy:getinfo(curl.INFO_SPEED_UPLOAD) / 1024 / 1024 * 8 
     io.close(outfile)
     easy:close()
@@ -102,6 +108,9 @@ end
     writefunction = function (response) pingdata = pingdata .. response end
     })
     status, value = pcall(easy.perform, easy)
+    if not status then
+        print("Error" .. value.. "with ipinfo.io host")
+     end
     easy:close()
     local status, data = pcall(cjson.decode, pingdata)
     return data
@@ -131,11 +140,15 @@ end
     writefunction = outfile
     })
     status, value = pcall(easy.perform, easy)
+    if not status then
+        print("Error" .. value.. "with ping host")
+     end
     local ping = easy:getinfo(curl.INFO_TOTAL_TIME)
     easy:close()
     io.close(outfile)
     return ping
 end
+
 --Find good server and add then to list
 local function GoodServers(servers, mycountry)
     local servlist = {}
