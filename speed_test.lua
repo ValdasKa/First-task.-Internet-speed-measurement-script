@@ -14,7 +14,7 @@ local timedl = 0
     local time = socket.gettime()
     local downloadspeedcallback = downloadspeednow / time / 1024 / 1024 * 8
     if downloadspeedcallback > 0 then
-        print(cjson.encode({dlspeed = downloadspeedcallback}))
+        print(cjson.encode({download_speed_Mbps_currently = downloadspeedcallback}))
     end
 end
 --Function to test download speed
@@ -46,7 +46,7 @@ local function UploadCallback(_, _, _,uploadspeednow )
     local time = socket.gettime()
     local uploadspeedcallback = uploadspeednow / time / 1024 / 1024 * 8
     if uploadspeedcallback > 0 then
-        print(cjson.encode({upspeed = uploadspeedcallback}))
+        print(cjson.encode({upload_speed_Mbps_currently  = uploadspeedcallback}))
     end
 end
 -- function for upload speed test
@@ -79,16 +79,14 @@ end
  function speed_test.FileExist()
     local outfile = io.open("speedtest_server_list.json", "r")
     if outfile~= nil then io.close(outfile) 
-        return print(true, "file already exist")
+        return true
     else
-        print(false, "I need to download file")
         local http = require("socket.http")
         local body, code = http.request("https://raw.githubusercontent.com/ValdasKa/Internet-speed-test-servers-json/main/speedtest_server_list.json")
         if not body then pcall(code) end
         local outfile = assert(io.open('speedtest_server_list.json', 'wb'))
         outfile:write(body)
         outfile:close()
-        return print("I am done downloading it now")
     end
 end
 

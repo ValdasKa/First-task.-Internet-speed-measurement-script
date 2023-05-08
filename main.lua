@@ -22,39 +22,40 @@ local args = parser:parse()
 -------------------------args end for runing functions-----------------
 
 -- args download speed test 
-if (args.download) then dl = speedtest.TestDownloadSpeed(args.download)
-    if dl then print(cjson.encode({dl = dl}))end
+if (args.download) then download_speed_Mbps = speedtest.TestDownloadSpeed(args.download)
+    if download_speed_Mbps then print(cjson.encode({download_speed_Mbps = download_speed_Mbps}))end
     end
 --args upload speed test 
-if args.upload then up = speedtest.TestUploadSpeed(args.upload)
-    if up then print(cjson.encode({up = up}))end
+if args.upload then upload_speed_Mbps = speedtest.TestUploadSpeed(args.upload)
+    if upload_speed_Mbps then print(cjson.encode({upload_speed_Mbps = upload_speed_Mbps}))end
     end
 --args to check if file exist
-if args.filecheck then filexist = speedtest.FileExist() if filexist then
-    print(cjson.encode({filexist = filexist})) end
+if args.filecheck then file_exist = speedtest.FileExist() if file_exist then
+    print(cjson.encode({file_exist = file_exist})) end
 end
 -- find location args command
-if args.location then loc = speedtest.FindMyLocation() if loc then
-    print(cjson.encode({loc = loc["loc"]}))end
+if args.location then location = speedtest.FindMyLocation() if location then
+    print(cjson.encode({location = location}))end
     end
 --Bestserver args start
 if args.bestserver then
-    bestserver, ping = speedtest.FindBestServer(ReadServerList(), args.bestserver)
-    if bestserver then print(cjson.encode({bestserver = bestserver, ping = ping}))end
+    best_server, latency_sec = speedtest.FindBestServer(ReadServerList(), args.bestserver)
+    if best_server then print(cjson.encode({best_server = best_server, latency_sec = latency_sec}))end
 end
 
 -------------------------Auto run everything start--------------------------
 if args.auto then
-    dl= speedtest.TestDownloadSpeed('speedtest.litnet.lt:8080')
-    up = speedtest.TestUploadSpeed('speedtest.litnet.lt:8080')
-    filexist = speedtest.FileExist()
-    bestserver, ping =speedtest.FindBestServer(ReadServerList(), location['country'])
-    loc = speedtest.FindMyLocation()
-    print(cjson.encode({filexist = filexist}))
-    print(cjson.encode({up = up}))
-    print(cjson.encode({dl = dl}))
-    print(cjson.encode({bestserver = bestserver, ping = ping}))
-    print(cjson.encode({loc = loc["loc"]}))
+    download_speed_Mbps= speedtest.TestDownloadSpeed('speedtest.litnet.lt:8080')
+    upload_speed_Mbps = speedtest.TestUploadSpeed('speedtest.litnet.lt:8080')
+    file_exist = speedtest.FileExist()
+    best_server, latency_sec =speedtest.FindBestServer(ReadServerList(), location['country'])
+    location = speedtest.FindMyLocation()
+    print(cjson.encode({file_exist = file_exist}))
+    print(cjson.encode({upload_speed_Mbps = upload_speed_Mbps}))
+    print(cjson.encode({download_speed_Mbps = download_speed_Mbps}))
+    print(cjson.encode({best_server = best_server, latency_sec = latency_sec}))
+    print()
+    print(cjson.encode({location = location}))
     end
     
     
