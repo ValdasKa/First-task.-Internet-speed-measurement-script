@@ -15,12 +15,13 @@ function TestBestServer:setUp()
 end
 
 function TestBestServer:TestBestServerReturnErrorNoLocation()
-    lu.assertErrorMsgEquals("Error couldnt find best server for this location",speed_test.FindBestServer,({}))
+    lu.assertErrorMsgEquals("Error couldnt find best server for this location"
+    ,speed_test.FindBestServer,({}))
 end
--- function TestBestServer:TestBestServerErrorListEmpty()
---     lu.assertIsTrue(speed_test.FindBestServer)
--- end
 
+function TestBestServer:TestBestServerErrorNotNil()
+    lu.assertNotNil(speed_test.FindBestServer)
+end
 
 function TestBestServer:tearDown()
     curl.easy = self.easy
