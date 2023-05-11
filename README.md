@@ -1,7 +1,7 @@
 # First-task.-Internet-speed-measurement-script
 
 Internet speed measurement
-
+```
 Options:
    -h, --help            Show this help message and exit.
    -l, --location        Get my current locations using ipinfo.io
@@ -13,5 +13,5 @@ Options:
                          Get download speed from server you input
          -u <upload>,    Get upload speed from server you input
    --upload <upload>
-   -f, --filecheck       Check if server list file exist
    -a, --auto            Make all tests auto
+```
