@@ -17,7 +17,7 @@ end
     function speed_test.TestDownloadSpeed(url)
     local outfile = io.open("/dev/null", "r+")
     if not outfile then
-        print("Error for /dev/null open")
+        error("Error for /dev/null open", 0)
     end
     easy = curl.easy({
     httpheader = {"User-Agent:curl/7.81.0","Accept:*/*",["Cache-Control"] = "no-cache"},
@@ -55,8 +55,8 @@ end
 -- function for upload speed test
     function speed_test.TestUploadSpeed(url)
     local outfile = io.open("/dev/zero", "r+")
-    if outfile ==nil then
-        print("Error for /dev/zero open")
+    if not outfile then
+        error("Error for /dev/zero open",0)
     end
     easy = curl.easy({
         httpheader = {"User-Agent:curl/7.81.0","Accept:*/*",["Cache-Control"] = "no-cache"},
@@ -89,13 +89,13 @@ function DownloadServerFile()
     if outfile==nil then
         local http = require("socket.http")
         local body, code = http.request("https://raw.githubusercontent.com/ValdasKa/Internet-speed-test-servers-json/main/speedtest_server_list.json")
-        if not body then pcall(code) end      
+        -- if not body then pcall(code) end      
         local outfile = assert(io.open('speedtest_server_list.json', 'wb'))
         outfile:write(body)
         outfile:close()
-        if not body then
-            error("Error " .. code .. "with file download")
-        end
+        -- if not body then
+        --     error("Error " .. code .. "with file download")
+        -- end
     end
 end
 DownloadServerFile()
@@ -115,7 +115,7 @@ DownloadServerFile()
     easy:close()
     local status, data = pcall(cjson.decode, pingdata)
     if not status then
-        error("Error" .. value.. "with ipinfo.io host")
+        error("Error" .. value.. "with ipinfo.io host",0)
      end
     return data
 end
@@ -126,7 +126,7 @@ end
 function ReadServerList()
     local serverlist = io.open("speedtest_server_list.json", "r")
     if not serverlist then
-        error("Error opening server list file for reading ")
+        error("Error opening server list file for reading",0)
     end
     local status, data = pcall(serverlist.read, serverlist, "*all")
     io.close(serverlist)
@@ -135,14 +135,17 @@ function ReadServerList()
         return decodedata
     end
     if not status then
-        error("Error " .. data .. "with read server list")
+        error("Error " .. data .. "with read server list",0)
     end
+    print(data)
     return false
 end
 
 --ping Function to ping servers
- function TestPing(url)
+
+ function ServerTestPing(url)
     local outfile = io.open("/dev/null", "r")
+    if not outfile then error("Error for /dev/null open",0) end
     easy = curl.easy({
     httpheader = {"User-Agent:curl/7.81.0","Accept:*/*",["Cache-Control"] = "no-cache"},
     [curl.OPT_CONNECTTIMEOUT] = 1,
@@ -155,7 +158,7 @@ end
     easy:close()
     io.close(outfile)
     if not status then
-        error("Error" .. value.. "with ping host")
+        error("Error" .. value.. "with ping host",0)
      end
     return ping
 end
@@ -169,7 +172,7 @@ local function GoodServers(servers, mycountry)
             table.insert(servlist, val["host"])
         end
     end
-    if servlist == nil then
+    if not servlist then
         error("Error server list is empty")
     end
     return servlist
@@ -181,18 +184,18 @@ function speed_test.FindBestServer(servers, mycountry)
     local bestping = 10
     local bestserver = ""
     local status, servlist = pcall(GoodServers, servers, mycountry)
-    if status == nil then
-        error("Error" .. servlist .. " with best server find")
+    if not status then
+        error("Error" .. servlist .. " with best server find",0)
     end
     for _, val in ipairs(servlist) do
-        local ping = TestPing(val)
+        local ping = ServerTestPing(val)
         if ping ~= nil and ping < bestping then
             bestserver = val
             bestping = ping
         end
     end
     if bestping == 10 or bestserver == ""  then
-        error("Error couldnt find best server for this location")
+        error("Error couldnt find best server for this location",0)
     end
     return bestserver, bestping
     end
