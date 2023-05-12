@@ -1,35 +1,30 @@
 package.path = package.path .. ";../?.lua"
 TestServerPing = {}
-local MockEasy = {}
-local curl = require("cURL")
+local MockEasy = require("mock_module")
+local easy = require("easy_curl_module")
 local lu = require("luaunit")
 require("speed_test")
 
 function TestServerPing:setUp()
-    self.easy = curl.easy
-    local easy = curl.easy
-    function MockEasy:perform() return nil end
-    function MockEasy:getinfo(...) return 0 end
-    function MockEasy:close() return easy():close() end
-    curl.easy = function (...) return MockEasy end
+    self.easy = easy
 end
 
 function TestServerPing:TestServerPingStatusGetErrorPerform()
-    function MockEasy:perform() return error("Error with perform", 0) end
-    lu.assertErrorMsgContains("Error with perform", ServerTestPing, "speed-kaunas.telia.lt:8080")
+    function MockEasy:perform() return error("Error ", 0) end
+    lu.assertErrorMsgContains("Error[CURL-EASY]", ServerTestPing, "superbadserver")
 end
 function TestServerPing:TestServerPingGetErrorGetinfo()
-    function MockEasy:getinfo(...) return error("Error ping Getinfo", 0) end
-    lu.assertErrorMsgEquals("Error ping Getinfo", ServerTestPing, "speed-kaunas.telia.lt:8080")
+    function MockEasy:getinfo(...) return error("Error", 0) end
+    lu.assertErrorMsgContains("Error[CURL-EASY]", ServerTestPing, "superbadserver")
 end
 
 function TestServerPing:TestServerPingBadUrl()
-    curl.easy = self.curl
+    easy = self.curl
     lu.assertErrorMsgContains("Error[CURL-EASY]", ServerTestPing, "super test")
 end
 
 function TestServerPing:TestServerPingNoUrl()
-    curl.easy = self.easy
+    easy = self.easy
     lu.assertErrorMsgContains("attempt to concatenate local 'url' (a nil value)", ServerTestPing)
 end
 
@@ -41,7 +36,6 @@ function TestServerPing:TestServerPingFileOpen()
 end
 
 function TestServerPing:tearDown()
-    curl.easy = self.easy
-    MockEasy = {}
+    easy = self.easy
 end
 return TestServerPing

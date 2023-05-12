@@ -1,17 +1,12 @@
 TestBestServer = {}
-MockEasy = {}
 package.path = package.path .. ";../?.lua"
+local easy = require("easy_curl_module")
 local lu = require("luaunit")
 local speed_test = require("speed_test")
 local curl = require("cURL")
 
 function TestBestServer:setUp()
-    self.easy = curl.easy
-    local easy = curl.easy
-    function MockEasy:perform() return nil end
-    function MockEasy:getinfo(...) return 0 end
-    function MockEasy:close() return easy():close() end
-    curl.easy = function (...) return MockEasy end
+    self.easy = easy
 end
 
 function TestBestServer:TestBestServerReturnErrorNoLocation()
@@ -24,7 +19,6 @@ function TestBestServer:TestBestServerErrorNotNil()
 end
 
 function TestBestServer:tearDown()
-    curl.easy = self.easy
-    MockEasy = {}
+    easy = self.easy
 end
 return TestBestServer
